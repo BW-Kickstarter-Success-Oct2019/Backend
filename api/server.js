@@ -4,6 +4,8 @@ const helmet = require('helmet')
 const cors = require('cors')
 
 //route imports
+const usersRouter = require('./auth/users/users-router')
+const campaignRouter = require('./campaign/campaign-router')
 
 
 //initiate server
@@ -16,6 +18,8 @@ server.use(helmet())
 server.use(cors())
 
 //routes
+server.use('/api', usersRouter)
+// server.use('/api', campaignRouter)
 
 
 module.exports = server
