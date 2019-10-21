@@ -1,25 +1,35 @@
-const db = require('../../../dataBase/dbConfig')
+const db = require('../../dataBase/dbConfig')
 
 module.exports = {
-    get,
-    getBy,
-    update,
-    remove,
+	add,
+	get,
+	getBy,
+	update,
+	remove,
+}
 
+async function add(campaign) {
+	const [id] = await db('campaign').insert(campaign, "id")
+
+	return db('campaign').where({ id }).first()
 }
 
 function get() {
-
+	return db('campaign')
 }
 
-function getBy() {
-
+function getBy(filter) {
+	return db('campaign').where({ filter }).first()
 }
 
-function update() {
-
+function update(id) {
+	
 }
 
-function remove() {
+async function remove(id) {
+	const campaign = await db('campaign').where({id}).first()
 
+	await db('campaign').where({id}).delete()
+
+	return campaign
 }
