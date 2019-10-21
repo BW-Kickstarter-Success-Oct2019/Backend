@@ -3,9 +3,10 @@ const express = require('express')
 //auth
 const bcrypt = require('bcryptjs')
 const jwtSecret = require('../utils/secret')
+const createToken = require('../utils/createToken')
 
 //middleware
-// const = require('')
+const restricted = require('../utils/restricted-middleware')
 const validateUser = require('../utils/validateUser-middleware')
 
 //dataBase
@@ -13,7 +14,7 @@ const usersModel = require('./users-model')
 
 const router = express.Router()
 
-router.post('/users/register', validateUser, (req, res) => {
+router.post('/user/register', validateUser, (req, res) => {
 	const user = req.body
 
 	const hash = bcrypt.hashSync(user.password, 10)
@@ -24,43 +25,52 @@ router.post('/users/register', validateUser, (req, res) => {
 			res.status(201).json(user)
 		})
 		.catch(err => {
-			res.status(500).json({message: 'could not add user to database', err})
+			res.status(500).json({ message: 'could not add user to database', err })
 		})
-
 })
 
-router.post('/users/login', (req, res) => {
+router.post('/user/login', (req, res) => {
+	const { username, password } = req.body
 
+	usersModel.getBy( {username} )
+		.then(user => {
+			if (user && bcrypt.compareSync(password, user.password)){
+				const  token  = createToken(user)
+				res.status(200).json({message: `Welcome ${user.username} to Kickstarter Success`, token})
+			} else {
+				res.status(401).json({message: "invalid credentials"})
+			}
+		})
 })
 
-router.get('/users',  (req, res) => {
+router.get('/user', restricted, (req, res) => {
 	usersModel.get()
 		.then(users => {
 			res.status(200).json(users)
 		})
 
 		.catch(err => {
-			res.status(500).json({message: 'could not get users', err})
+			res.status(500).json({ message: 'could not get users', err })
 		})
 })
 
-router.put('/users/update', validateUser,  (req, res) => {
-
+router.put('/user/update', validateUser, restricted, (req, res) => {
+	
 })
 
-router.delete('/users/delete/:id', (req, res) => {
-	const id = req.params.id
+router.delete('/user/delete', restricted, (req, res) => {
+	const id = req.userid
 
 	usersModel.remove(id)
 		.then(user => {
-			if(user){
+			if (user) {
 				res.status(200).json(user)
 			} else {
-				res.status(400).json({message: "the user with that id does not exsist"})
+				res.status(400).json({ message: "the user with that id does not exsist" })
 			}
 		})
 		.catch(err => {
-			res.status(500).json({message: 'could not delete user', err})
+			res.status(500).json({ message: 'could not delete user', err })
 		})
 })
 
