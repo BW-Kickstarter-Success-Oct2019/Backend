@@ -19,11 +19,11 @@ function get() {
 }
 
 function getBy(filter) {
-	return db('users').where({ filter }).first()
+	return db('users').where( filter ).first()
 }
 
 function update(id) {
-
+	
 }
 
 async function remove(id) {
@@ -32,6 +32,4 @@ async function remove(id) {
 	await db('users').where({id}).delete()
 
 	return user
-	
-
 }
