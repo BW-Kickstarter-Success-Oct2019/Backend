@@ -19,11 +19,11 @@ function get() {
 }
 
 function getBy(filter) {
-	return db('campaign').where({ filter }).first()
+	return db('campaign').where(filter)
 }
 
-function update(id) {
-	
+function update(id, updatedCampaign) {
+	return db('campaign').where({id}).update(updatedCampaign)
 }
 
 async function remove(id) {
