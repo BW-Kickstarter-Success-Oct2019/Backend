@@ -14,15 +14,15 @@ exports.up = function (knex) {
 			.onDelete('CASCADE');
 		
 		tbl
-			.string('campaign_name',255)
+			.string('name',255)
 			.notNullable()
 		
 		tbl
-			.text('campaign_description')
+			.text('blurb')
 			.notNullable()
 
 		tbl
-			.float('goal_amount')
+			.float('goal')
 			.notNullable()
 
 		tbl	
@@ -30,7 +30,7 @@ exports.up = function (knex) {
 			.notNullable()
 		
 		tbl
-			.string('duration', 128)
+			.integer('duration', 128)
 			.notNullable()
 
 		tbl
@@ -38,7 +38,7 @@ exports.up = function (knex) {
 			.notNullable()
 		
 		tbl
-			.float('campaign_success')
+			.float('success')
 
 	})
 };
