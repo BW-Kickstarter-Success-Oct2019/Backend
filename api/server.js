@@ -22,7 +22,7 @@ server.use('/api', usersRouter)
 
 //auth routes
 server.use(restricted)
-server.use('/api/users', campaignRouter)
+server.use('/api/restricted', campaignRouter)
 
 
 module.exports = server
