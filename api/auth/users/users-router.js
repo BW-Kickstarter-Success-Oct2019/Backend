@@ -44,7 +44,7 @@ router.post('/user/login', (req, res) => {
 })
 
 router.get('/user', restricted, (req, res) => {
-	usersModel.get()
+	usersModel.get().first()
 		.then(users => {
 			res.status(200).json(users)
 		})
