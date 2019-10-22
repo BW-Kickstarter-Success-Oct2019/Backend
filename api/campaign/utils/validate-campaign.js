@@ -2,9 +2,9 @@ module.exports = (req, res, next) => {
     const campaign = req.body
 
     if (
-        !campaign.campaign_name||
-        !campaign.campaign_description||
-        !campaign.goal_amount||
+        !campaign.name||
+        !campaign.blurb||
+        !campaign.goal||
         !campaign.country||
         !campaign.duration||
         !campaign.category
