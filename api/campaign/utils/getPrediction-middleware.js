@@ -9,6 +9,7 @@ module.exports = (req, res, next) => {
 			next()
 		})
 		.catch(err => {
-			res.status(500).json({ errMessage: 'could not predict model', err })
+			req.body.success = null
+			next()	
 		})
 }
