@@ -10,13 +10,12 @@ module.exports = (req, res, next) => {
         !campaign.category
     ) {
         res.status(400).json({ message: "missing requried fields" , fields: [
-            "campaign_name",
-            "campaign_description",
-            "goal_amount",
+            "name",
+            "blurb",
+            "goal",
             "country",	
             "duration",
             "category",
-            "campaign_success"
         ]})
     }
     else {
