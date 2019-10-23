@@ -36,6 +36,19 @@ router.get('/campaigns', (req, res) => {
 		})
 });
 
+router.get('/campaigns/:id', (req, res) => {
+	const id = req.params.id
+	campaignModel.getBy({ id }).first()
+		.then(campaign => {
+				res.status(200).json(campaign);
+		})
+
+		.catch(err => {
+			res.status(500).json({ errMessage: "internal database error", err });
+		})
+});
+
+
 router.put('/campaigns/:id', validateId, validateFields, getPrediction, (req, res) => {
 	const updatedCampaign = req.body;
 	const id = req.params.id;
