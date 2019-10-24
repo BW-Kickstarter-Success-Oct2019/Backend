@@ -9,97 +9,124 @@ const db = require('../../dataBase/dbConfig')
 describe('campaign router', () => {
 	beforeEach(async () => {
 		await db('campaign').truncate();
+		await db('users').truncate();
 	});
 
 
-	describe('Post to /api/resricted/campaigns', () => {
-		
-		it('should be a resricted route', async () => {
-			const user = { username: "matthew", password: "1234",  }
-			const token = createToken(user)
+	describe('POST to /api/resricted/campaigns', () => {
 
-			const response = await request(server.get('/api/resricted/campaigns'))
-			console.log(response)
+		it('should be a resricted route', async () => {
+			const user = await request(server)
+				.post('/api/user/register')
+				.send({ username: 'matthew', password: '123', email: 'demo@demo.com' })
+
+				const login = await request(server)
+				.post('/api/user/login')
+				.send({ username: 'matthew', password: '123' })
+
+			const response = await request(server).get('/api/restricted/campaigns')
 			expect(response.status).toBe(400)
 
-			const secondResponse = await request(server).get('/api/resricted/campaigns')
-				.set('authorization', token)
+			const secondResponse = await request(server).get('/api/restricted/campaigns')
+			.set('authorization', login.body.token)
 
 			expect(secondResponse.status).toBe(200)
 		})
-		// it('should add campaign to database', async () => {
-		// 	const initial = await db('campaign')
-		// 	expect(initial).toHaveLength(0)
 
-		// 	const user = await request(server)
-		// 	.post('/api/user/register')
-		// 	.send({
-		// 		username: 'matthew',
-		// 		password: '123', 
-		// 		email: 'demo@demo.com' 
-		// 	})
-	
-		// 	const campaign = await campaignModel.add({
-		// 	"user_id": 1,	
-		// 	"name":"software designs33",
-		// 	"blurb": "A software company",
-		// 	"goal": 1000,
-		// 	"country": "us",
-		// 	"duration": 30,
-		// 	"category":"fashion"
-		// })
-	
-		// 	const campaigns = await db('campaign')
-		// 	expect(campaigns).toHaveLength(1)
-		// })
-	
-		// it('should return the added campign', async () => {
-		// 	const campaign = await campaignModel.add({	
-		// 	"user_id": 1,
-		// 	"name":"software designs33",
-		// 	"blurb": "A software company",
-		// 	"goal": 1000,
-		// 	"country": "us",
-		// 	"duration": 30,
-		// 	"category":"fashion"
-		// })
-		// 	expect(campaign.name).toBe('software designs33')
-		// })
+		it('should add campaign to database', async () => {
+			const initial = await db('campaign')
+			expect(initial).toHaveLength(0)
+
+			const user = await request(server)
+				.post('/api/user/register')
+				.send({ username: 'matthew', password: '123', email: 'demo@demo.com' })
+
+			const login = await request(server)
+				.post('/api/user/login')
+				.send({ username: 'matthew', password: '123' })
+
+			const postCampaign = await request(server).post('/api/restricted/campaigns')
+				.send({
+					"user_id": 1,
+					"name": "software designs33",
+					"blurb": "A software company",
+					"goal": 1000,
+					"country": "us",
+					"duration": 30,
+					"category": "fashion"
+				})
+				.set('authorization', login.body.token)
+
+			const campaigns = await db('campaign')
+			expect(campaigns).toHaveLength(1)
+		})
+
+		it('should return campaign', async () => {
+			const initial = await db('campaign')
+			expect(initial).toHaveLength(0)
+
+			const user = await request(server)
+				.post('/api/user/register')
+				.send({ username: 'matthew', password: '123', email: 'demo@demo.com' })
+
+			const login = await request(server)
+				.post('/api/user/login')
+				.send({ username: 'matthew', password: '123' })
+
+			const campaign = await request(server).post('/api/restricted/campaigns')
+				.send({
+					"user_id": 1,
+					"name": "software designs33",
+					"blurb": "A software company",
+					"goal": 1000,
+					"country": "us",
+					"duration": 30,
+					"category": "fashion"
+				})
+				.set('authorization', login.body.token)
+
+			expect(campaign.body.id).toBe(1)
+		})
 	})
 
-// 	describe('remove function', () => {
-// 		it('should remove campaign from db', async () => {
-// 			const campaign = await campaignModel.add({name: 'matthew', sport: 'coding'})
 
-// 			const initial = await db('campaign')
-// 			expect(initial).toHaveLength(1)
-	
-// 			const deletedcampaign = await campaignModel.remove(campaign.id)
-	
-// 			const campaigns = await db('campaigns')
-// 			expect(campaigns).toHaveLength(0)
-// 		})
+	describe('DELETE to /api/resricted/campaigns', () => {
+		it('should remove campaign from db', async () => {
 
-// 		it('should return removed campaign', async () => {
-// 			const campaign = await campaignModel.add({name: 'matthew', sport: 'coding'})
 
-// 			const initial = await db('campaigns')
-// 			expect(initial).toHaveLength(1)
-	
-// 			const deletedcampaign = await campaignModel.remove(campaign.id)
-	
-// 			expect(deletedcampaign.name).toBe('matthew')
-// 		})
+			const user = await request(server)
+				.post('/api/user/register')
+				.send({ username: 'matthew', password: '123', email: 'demo@demo.com' })
 
-// 		it('should return message: "could not delete campaign" if id is invalid', async () => {
-// 			const campaign = await campaignModel.add({name: 'matthew', sport: 'coding'})
+			const login = await request(server)
+				.post('/api/user/login')
+				.send({ username: 'matthew', password: '123' })
 
-// 			const initial = await db('campaigns')
-// 			expect(initial).toHaveLength(1)
-	
-// 			const deletedcampaign = await campaignModel.remove(4)
-	
-// 			expect(deletedcampaign.message).toBe('could not delete campaign')
-// 		})
-// 	})
+			const campaign = await request(server).post('/api/restricted/campaigns')
+				.send({
+					"user_id": 1,
+					"name": "software designs33",
+					"blurb": "A software company",
+					"goal": 1000,
+					"country": "us",
+					"duration": 30,
+					"category": "fashion"
+				})
+				.set('authorization', login.body.token)
+
+			const campaigns = await request(server).get('/api/restricted/campaigns')
+				.set('authorization', login.body.token)
+
+			expect(campaigns.body).toHaveLength(1)
+
+			const deleteCampaign = await request(server).delete('/api/restricted/campaigns/1')
+				.set('authorization', login.body.token)
+
+
+			const result = await request(server).get('/api/restricted/campaigns')
+				.set('authorization', login.body.token)
+
+			expect(result.body).toHaveLength(0)
+		})
+	})
 })
