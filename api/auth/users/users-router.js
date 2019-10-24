@@ -2,7 +2,6 @@ const express = require('express')
 
 //auth
 const bcrypt = require('bcryptjs')
-const jwtSecret = require('../utils/secret')
 const createToken = require('../utils/createToken')
 
 //middleware
@@ -43,7 +42,7 @@ router.post('/user/login', (req, res) => {
 		})
 })
 
-router.get('/user', restricted, (req, res) => {
+router.get('/user/restricted', restricted, (req, res) => {
 	usersModel.get().first()
 		.then(users => {
 			res.status(200).json(users)

@@ -36,7 +36,7 @@ router.get('/campaigns', (req, res) => {
 		})
 });
 
-router.get('/campaigns/:id', (req, res) => {
+router.get('/campaigns/:id',validateId, (req, res) => {
 	const id = req.params.id
 	campaignModel.getBy({ id }).first()
 		.then(campaign => {
@@ -48,14 +48,13 @@ router.get('/campaigns/:id', (req, res) => {
 		})
 });
 
-
 router.put('/campaigns/:id', validateId, validateFields, getPrediction, (req, res) => {
 	const updatedCampaign = req.body;
 	const id = req.params.id;
 
 	 campaignModel.update(id, updatedCampaign)
-	 	.then(dbRes => {
-			campaignModel.getBy( {id} ).first()
+	 	.then( () => {
+			campaignModel.getBy({ id }).first()
 				.then(campaign => {
 					res.status(200).json(campaign);
 				})

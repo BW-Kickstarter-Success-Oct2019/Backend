@@ -19,7 +19,7 @@ function get() {
 }
 
 function getBy(filter) {
-	return db('campaign').where(filter)
+	return db('campaign').where(filter).orderBy("id", 'asc')
 }
 
 function update(id, updatedCampaign) {
